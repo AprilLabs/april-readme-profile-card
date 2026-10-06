@@ -33,7 +33,7 @@ jobs:
           card: stats
           options: username=AprilNEA&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged&icon_color=586069&title_color=60696f
           path: public/light.svg
-          token: ${{ secrets.PAT_1 || github.token }}
+          token: ${{ secrets.PAT_1 }}
       - name: Validate light stats card
         run: |
           card=public/light.svg
@@ -51,7 +51,7 @@ jobs:
           card: stats
           options: username=AprilNEA&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged&icon_color=60696f&title_color=8d939d&bg_color=1f2228&text_color=8d939d
           path: public/dark.svg
-          token: ${{ secrets.PAT_1 || github.token }}
+          token: ${{ secrets.PAT_1 }}
       - name: Validate dark stats card
         run: |
           card=public/dark.svg
@@ -108,7 +108,7 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run download
         env:
-          PAT_1: ${{ secrets.PAT_1 || github.token }}
+          PAT_1: ${{ secrets.PAT_1 }}
       - wait: [download_stats_cards]
       - uses: actions/upload-pages-artifact@v4
         with:

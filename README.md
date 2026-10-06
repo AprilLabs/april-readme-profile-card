@@ -6,7 +6,7 @@ Generate light and dark GitHub stats cards and JSON statistics for [AprilNEA](ht
 
 Set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**. Push changes to `master`, or run the **Update** workflow manually. The workflow also runs at minutes 13 and 42 of each hour.
 
-The workflow uses the built-in `GITHUB_TOKEN` for public statistics. To include private statistics, add a repository Actions secret named `PAT_1` with a personal access token that has `repo` and `read:user` scopes. When `PAT_1` exists, the workflow uses that token instead.
+Before running the workflow, add a repository Actions secret named `PAT_1` with a personal access token for the statistics account. Use a token with access to public data for public statistics. To include private statistics, use a classic token with `repo` and `read:user` scopes. The built-in `GITHUB_TOKEN` cannot read the account-wide repository statistics used by this workflow.
 
 After a successful deployment, the files are available at:
 
