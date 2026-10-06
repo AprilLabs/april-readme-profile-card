@@ -1,12 +1,14 @@
 {
-  "name": "sukka-readme-profile-card",
+  "name": "april-readme-profile-card",
   "version": "0.0.0",
   "private": true,
-  "description": "",
+  "description": "GitHub profile cards and statistics for AprilNEA",
   "main": "index.ts",
   "scripts": {
     "lint": "eslint --format=sukka .",
-    "download": "node -r @swc-node/register index.ts"
+    "download": "node -r @swc-node/register index.ts",
+    "format": "eslint --fix .",
+    "typecheck": "tsc --noEmit"
   },
   "author": "",
   "dependencies": {

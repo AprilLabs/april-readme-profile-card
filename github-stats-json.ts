@@ -63,7 +63,7 @@ function graphql(ghPAT: string, query: string, variables: Record<string, string 
       method: 'POST',
       headers: {
         Authorization: `Bearer ${ghPAT}`,
-        'User-Agent': 'Sukka API - Fetch My GitHub User Info'
+        'User-Agent': 'April GitHub Profile Stats'
       },
       body: JSON.stringify({ variables, query })
     }
@@ -72,26 +72,26 @@ function graphql(ghPAT: string, query: string, variables: Record<string, string 
 
 function fetcher(ghPAT: string, repoCursor?: string) {
   return graphql(ghPAT, query, {
-    login: 'sukkaw',
+    login: 'AprilNEA',
     repoAfter: repoCursor || null
   });
 }
 
 function fetcherContributedTo(ghPAT: string) {
-  return graphql(ghPAT, contributedToQuery, { login: 'sukkaw' });
+  return graphql(ghPAT, contributedToQuery, { login: 'AprilNEA' });
 }
 
 function fetcherTotalCommit(ghPAT: string) {
-  return fetch('https://api.github.com/search/commits?q=author:sukkaw', {
+  return fetch('https://api.github.com/search/commits?q=author:AprilNEA', {
     headers: {
       Accept: 'application/vnd.github.cloak-preview',
-      'User-Agent': 'Sukka API - Fetch My GitHub User Info',
+      'User-Agent': 'April GitHub Profile Stats',
       Authorization: `Bearer ${ghPAT}`
     }
   });
 }
 
-export async function githubSukka(ghPAT: string) {
+export async function fetchGitHubStats(ghPAT: string) {
   const stats = {
     totalPRs: 'N/A',
     totalMergedPRs: 'N/A',

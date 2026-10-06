@@ -2,35 +2,38 @@ name: Update
 
 on:
   push:
+    branches: [master]
   schedule:
     - cron: 13,42 * * * *
 
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: profile-cards
+  cancel-in-progress: false
 
 jobs:
   stats:
     name: Generate stats card img
     runs-on: ubuntu-slim
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      # base options: username=sukkaw&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged
+      # base options: username=AprilNEA&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged
       # light options: icon_color=586069&title_color=60696f
       # dark options: icon_color=60696f&title_color=8d939d&bg_color=1f2228&text_color=8d939d
       - name: Generate light stats card
-        uses: readme-tools/github-readme-stats-action@v1
+        uses: stats-organization/github-readme-stats-action@v1
         with:
           card: stats
-          options: username=sukkaw&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged&icon_color=586069&title_color=60696f
+          options: username=AprilNEA&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged&icon_color=586069&title_color=60696f
           path: public/light.svg
-          token: ${{ secrets.PAT_1 }}
+          token: ${{ secrets.PAT_1 || github.token }}
       - name: Validate light stats card
         run: |
           card=public/light.svg
@@ -43,12 +46,12 @@ jobs:
             exit 1
           fi
       - name: Generate dark stats card
-        uses: readme-tools/github-readme-stats-action@v1
+        uses: stats-organization/github-readme-stats-action@v1
         with:
           card: stats
-          options: username=sukkaw&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged&icon_color=60696f&title_color=8d939d&bg_color=1f2228&text_color=8d939d
+          options: username=AprilNEA&show_icons=true&hide_border=true&include_all_commits=true&hide_title=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged&icon_color=60696f&title_color=8d939d&bg_color=1f2228&text_color=8d939d
           path: public/dark.svg
-          token: ${{ secrets.PAT_1 }}
+          token: ${{ secrets.PAT_1 || github.token }}
       - name: Validate dark stats card
         run: |
           card=public/dark.svg
@@ -68,13 +71,12 @@ jobs:
             public/light.svg
             public/dark.svg
           if-no-files-found: error
+          retention-days: 1
 
   download:
     name: Download profile data
     needs: stats
     runs-on: ubuntu-slim
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v7
@@ -101,18 +103,28 @@ jobs:
           path: public
       - wait: [setup_node, setup_pnpm]
       - run: pnpm config set --location=global minimumReleaseAge 0
-      - run: pnpm i
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run typecheck
       - run: pnpm run download
         env:
-          PAT_1: ${{ secrets.PAT_1 }}
+          PAT_1: ${{ secrets.PAT_1 || github.token }}
       - wait: [download_stats_cards]
-      - uses: GeekyEggo/delete-artifact@v6
+      - uses: actions/upload-pages-artifact@v4
         with:
-          name: dist
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          keep_files: true
-          force_orphan: true
-          publish_branch: dist
+          path: public
+
+  deploy:
+    name: Deploy profile cards
+    needs: download
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
