@@ -11,6 +11,9 @@ coverage/
 .parcel-cache
 dist
 .env*
+!.envrc
 public/*.svg
 public/github-stats.json
 *.tsbuildinfo
+.devenv/
+.direnv/

@@ -25,7 +25,9 @@ After a successful deployment, the files are available at:
 
 ## Local use
 
-Use Node.js 26 and pnpm 11.17.0. After authenticating GitHub CLI, run:
+Use `devenv shell` to enter the Node.js 26 environment. pnpm uses the version specified in `package.json` (11.17.0). To activate the environment when entering the directory, run `direnv allow`.
+
+CI uses Node.js and pnpm directly. After authenticating GitHub CLI, run these commands inside the development environment:
 
 ```sh
 pnpm install --frozen-lockfile
